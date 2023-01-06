@@ -1,47 +1,54 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/hello" {
-		http.Error(w, "404 not found.", http.StatusNoContent)
-		return
-	}
-	if r.Method != "GET" {
-		http.Error(w, "Method is not supported.", http.StatusNotFound)
-		return
-	}
-	fmt.Fprint(w, "hello wolrd")
+type Passenger struct {
+	Firstname string  `json:"firstname"`
+	Lastname  string  `json:"Lastname"`
+	Ticket    *Ticket `json:"ticket"`
 }
-func html(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("content-type", "text/html")
+
+type Ticket struct {
+	TicketNumber int `json:"ticketnumber"`
+}
+
+var passenger []Passenger
+
+func getPassengers(w http.ResponseWriter, r *http.Request) {
+
+	//w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(passenger)
 
 }
-func formHandler(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
-	}
-	fmt.Fprintf(w, "POST request successful")
-	name := r.FormValue("name")
-	address := r.FormValue("address")
+func getPassengerId(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Fprintf(w, "Name = %s\n", name)
-	fmt.Fprintf(w, "Address = %s\n", address)
+}
+func updatePassenger(w http.ResponseWriter, r *http.Request) {
+
+}
+func deletePassenger(w http.ResponseWriter, r *http.Request) {
+
 }
 
 func main() {
+	router := mux.NewRouter()
+	//mock data
+	passenger = append(passenger, Passenger{Firstname: "horrace", Lastname: "you know", Ticket: &Ticket{TicketNumber: 10}})
 
-	http.HandleFunc("/hello", hello)
+	router.HandleFunc("/getPassengers", getPassengers).Methods("GET")
+	router.HandleFunc("/getPassenger/{id}", getPassengerId).Methods("GET")
+	router.HandleFunc("/updatePassenger/{id}", updatePassenger).Methods("PUT")
+	router.HandleFunc("/deletePassenger/{id}", deletePassenger).Methods("DELETE")
 
-	http.HandleFunc("/form", formHandler)
-
-	fmt.Printf("Starting server at port 8080\n")
-	if err := http.ListenAndServe(":3100", nil); err != nil {
+	fmt.Printf("Starting server at port 8000\n")
+	if err := http.ListenAndServe(":8000", router); err != nil {
 		log.Fatal(err)
 	}
 }
