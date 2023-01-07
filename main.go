@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -21,6 +23,16 @@ type Ticket struct {
 }
 
 var passengers []Passengers
+
+func createPassenger(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var passenger Passengers
+	_ = json.NewDecoder(r.Body).Decode(&passenger)
+	passenger.Id = strconv.Itoa(rand.Intn(10000000))
+	passengers = append(passengers, passenger)
+
+	json.NewEncoder(w).Encode(passenger)
+}
 
 func getPassengers(w http.ResponseWriter, r *http.Request) {
 
@@ -41,10 +53,33 @@ func getPassengerId(w http.ResponseWriter, r *http.Request) {
 
 }
 func updatePassenger(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for index, passenger := range passengers {
+		if passenger.Id == params["id"] {
+			passengers = append(passengers[:index], passengers[index+1:]...)
+
+			var passenger Passengers
+			_ = json.NewDecoder(r.Body).Decode(&passenger)
+			passenger.Id = strconv.Itoa(rand.Intn(10000000))
+			passengers = append(passengers, passenger)
+
+			json.NewEncoder(w).Encode(passenger)
+
+			return
+		}
+	}
 
 }
 func deletePassenger(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for index, passenger := range passengers {
+		if passenger.Id == params["id"] {
+			passengers = append(passengers[:index], passengers[index+1:]...)
+			break
+		}
+	}
 }
 
 func main() {
@@ -57,6 +92,7 @@ func main() {
 
 	router.HandleFunc("/getPassengers", getPassengers).Methods("GET")
 	router.HandleFunc("/getPassenger/{id}", getPassengerId).Methods("GET")
+	router.HandleFunc("/createPassengers", createPassenger).Methods("POST")
 	router.HandleFunc("/updatePassenger/{id}", updatePassenger).Methods("PUT")
 	router.HandleFunc("/deletePassenger/{id}", deletePassenger).Methods("DELETE")
 
