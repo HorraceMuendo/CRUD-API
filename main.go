@@ -1,5 +1,7 @@
 package main
 
+// Todo connect to postgres
+
 import (
 	"encoding/json"
 	"fmt"
