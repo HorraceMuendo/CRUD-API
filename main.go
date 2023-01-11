@@ -11,7 +11,27 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+
+	"database/sql"
+
+	_ "github.com/lib/pq"
 )
+
+const (
+	DB_USER     = "postgres"
+	PORT        = 5432
+	DB_PASSWORD = ""
+	DB_NAME     = "planeTicketApi"
+)
+
+func dbSetup() *sql.DB {
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME)
+
+	db, err := sql.Open("postgres", dbinfo)
+
+	checkError(err)
+	return db
+}
 
 type Passengers struct {
 	Id        string  `json:"id"`
