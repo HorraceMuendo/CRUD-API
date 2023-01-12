@@ -3,6 +3,7 @@ package main
 // Todo connect to postgres
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -11,9 +12,6 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-
-	"database/sql"
-
 	_ "github.com/lib/pq"
 )
 
@@ -23,15 +21,6 @@ const (
 	DB_PASSWORD = ""
 	DB_NAME     = "planeTicketApi"
 )
-
-func dbSetup() *sql.DB {
-	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME)
-
-	db, err := sql.Open("postgres", dbinfo)
-
-	checkError(err)
-	return db
-}
 
 type Passengers struct {
 	Id        string  `json:"id"`
@@ -107,16 +96,30 @@ func deletePassenger(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter()
 	//mock data
-	passengers = append(passengers, Passengers{Id: "1", Firstname: "horrace", Lastname: "muendo", Ticket: &Ticket{TicketNumber: 10}})
-	passengers = append(passengers, Passengers{Id: "2", Firstname: "maggie", Lastname: "wambui", Ticket: &Ticket{TicketNumber: 13}})
-	passengers = append(passengers, Passengers{Id: "3", Firstname: "victor", Lastname: "muchui", Ticket: &Ticket{TicketNumber: 17}})
-	passengers = append(passengers, Passengers{Id: "4", Firstname: "fortune", Lastname: "timothy", Ticket: &Ticket{TicketNumber: 20}})
+	// passengers = append(passengers, Passengers{Id: "1", Firstname: "horrace", Lastname: "muendo", Ticket: &Ticket{TicketNumber: 10}})
+	// passengers = append(passengers, Passengers{Id: "2", Firstname: "maggie", Lastname: "wambui", Ticket: &Ticket{TicketNumber: 13}})
+	// passengers = append(passengers, Passengers{Id: "3", Firstname: "victor", Lastname: "muchui", Ticket: &Ticket{TicketNumber: 17}})
+	// passengers = append(passengers, Passengers{Id: "4", Firstname: "fortune", Lastname: "timothy", Ticket: &Ticket{TicketNumber: 20}})
 
 	router.HandleFunc("/getPassengers", getPassengers).Methods("GET")
 	router.HandleFunc("/getPassenger/{id}", getPassengerId).Methods("GET")
 	router.HandleFunc("/createPassengers", createPassenger).Methods("POST")
 	router.HandleFunc("/updatePassenger/{id}", updatePassenger).Methods("PUT")
 	router.HandleFunc("/deletePassenger/{id}", deletePassenger).Methods("DELETE")
+
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME)
+	db, err := sql.Open("postgres", dbinfo)
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("connection succesful")
 
 	fmt.Printf("Starting server at port 8000\n")
 	if err := http.ListenAndServe(":8000", router); err != nil {
