@@ -1,8 +1,5 @@
 package main
 
-// Todo connect to postgres
-// Restructure project
-
 import (
 	"fmt"
 	"log"
