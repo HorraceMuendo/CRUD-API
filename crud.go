@@ -24,7 +24,7 @@ type Passengers struct {
 	gorm.Model
 	Firstname string  `json:"firstname"`
 	Lastname  string  `json:"lastname"`
-	Ticket    *Ticket `json:"ticket"`
+	Ticket    *Ticket `gorm:"-"`
 }
 
 type Ticket struct {
@@ -39,7 +39,10 @@ func initMigration() {
 	if err != nil {
 		fmt.Println(err.Error())
 		panic("connection unsuccesful")
+	} else {
+		fmt.Println("connected")
 	}
+
 	DB.AutoMigrate(&Passengers{})
 }
 
