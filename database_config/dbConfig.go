@@ -2,13 +2,21 @@ package database
 
 import (
 	"fmt"
+	entity "planeTicketApi/Entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
+const (
+	PORT        = 5432
+	DB_USER     = "postgres"
+	DB_PASSWORD = ""
+	DB_NAME     = "planeTicketApi"
+)
+
 func initMigration() {
-	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME)
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s port=%d sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME, PORT)
 
 	DB, err := gorm.Open(postgres.Open(dbinfo), &gorm.Config{})
 
@@ -19,5 +27,5 @@ func initMigration() {
 		fmt.Println("connected")
 	}
 
-	DB.AutoMigrate(&Passengers{})
+	DB.AutoMigrate(&entity.Passengers{})
 }
