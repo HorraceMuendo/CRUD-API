@@ -5,11 +5,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
 
 func initRouter() {
+	app := fiber.New(fiber.Config{AppName: "PlaneTicketApi v1.0.0"})
+
 	router := mux.NewRouter()
 
 	router.HandleFunc("/getPassengers", getPassengers).Methods("GET")
