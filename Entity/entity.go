@@ -7,6 +7,7 @@ import (
 type Passengers struct {
 	gorm.Model
 	Firstname string  `json:"firstname"`
+	Email     string  `json:"email"`
 	Lastname  string  `json:"lastname"`
 	Ticket    *Ticket `gorm:"-"`
 }
