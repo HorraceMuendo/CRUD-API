@@ -38,8 +38,23 @@ func GetPassengerById(c *fiber.Ctx) error {
 
 }
 func UpdatePassenger(c *fiber.Ctx) error {
+	passenger := new(entity.Passengers)
+	id := c.Params("id")
+
+	if err := c.BodyParser(passenger); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+	DB.Where("id=?", id).Updates(&passenger)
+	return c.Status(200).JSON(passenger)
 
 }
 func DeletePassenger(c *fiber.Ctx) error {
+	var passenger entity.Passengers
+	id := c.Params("id")
+	delete := DB.Delete(&passenger, id)
 
+	if delete.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+	return c.SendStatus(200)
 }
