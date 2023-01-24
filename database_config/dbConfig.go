@@ -9,14 +9,15 @@ import (
 )
 
 const (
+	Host        = "localhost"
 	PORT        = 5432
 	DB_USER     = "postgres"
-	DB_PASSWORD = ""
+	DB_PASSWORD = "postgres"
 	DB_NAME     = "planeTicketApi"
 )
 
 func InitMigration() {
-	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s port=%d sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME, PORT)
+	dbinfo := fmt.Sprintf("user=%s password=%s dbname=%s port=%d host=%s sslmode=disable", DB_USER, DB_PASSWORD, DB_NAME, PORT, Host)
 
 	DB, err := gorm.Open(postgres.Open(dbinfo), &gorm.Config{})
 

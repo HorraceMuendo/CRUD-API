@@ -15,7 +15,7 @@ import (
 // func initRouter() {
 // 	app := fiber.New(fiber.Config{AppName: "PlaneTicketApi v1.0.0"})
 
-// 	app.Get("/getPassengers")
+// 	app.Get("/getPassengers",)
 // 	//router := mux.NewRouter()
 
 // 	// router.HandleFunc("/getPassengers", getPassengers).Methods("GET")
@@ -37,6 +37,6 @@ func main() {
 	if err := http.ListenAndServe(":8000", nil); err != nil {
 		log.Fatal(err)
 	}
-	//initRouter()
+	//	initRouter()
 
 }

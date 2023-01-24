@@ -12,8 +12,13 @@ var err error
 
 // database configurations
 
-func createPassenger() {
-
+func CreatePassenger(c *fiber.Ctx) error {
+	passenger := new(entity.Passengers)
+	if err := c.BodyParser(passenger); err != nil {
+		return c.Status(503).SendString(err.Error())
+	}
+	DB.Create(&passenger)
+	return c.Status(200).JSON(passenger)
 }
 
 func GetPassengers(c *fiber.Ctx) error {
@@ -21,12 +26,20 @@ func GetPassengers(c *fiber.Ctx) error {
 	DB.Find(&passengers)
 	return c.Status(200).JSON(passengers)
 }
-func getPassengerId() {
+func GetPassengerById(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var passenger entity.Passengers
+	match := DB.Find(&passenger, id)
+
+	if match.RowsAffected == 0 {
+		return c.SendStatus(404)
+	}
+	return c.Status(200).JSON(&passenger)
 
 }
-func updatePassenger() {
+func UpdatePassenger(c *fiber.Ctx) error {
 
 }
-func deletePassenger() {
+func DeletePassenger(c *fiber.Ctx) error {
 
 }
