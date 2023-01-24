@@ -5,30 +5,26 @@ import (
 	"log"
 	"net/http"
 	database "planeTicketApi/database_config"
+	"planeTicketApi/handlers"
 
-	// "github.com/gofiber/fiber"
-	// "github.com/gofiber/fiber/v2"
-
+	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq"
 )
 
-// func initRouter() {
-// 	app := fiber.New(fiber.Config{AppName: "PlaneTicketApi v1.0.0"})
+func initRouter() {
+	app := fiber.New(fiber.Config{AppName: "PlaneTicketApi v1.0.0"})
 
-// 	app.Get("/getPassengers",)
-// 	//router := mux.NewRouter()
+	app.Get("/getPassengers", handlers.GetPassengers)
+	app.Get("/getPassengers/:id", handlers.GetPassengerById)
+	app.Post("/getPassengers", handlers.CreatePassenger)
+	app.Put("/updatePassengers/:id", handlers.UpdatePassenger)
+	app.Delete("/deletePassengers/:id", handlers.DeletePassenger)
 
-// 	// router.HandleFunc("/getPassengers", getPassengers).Methods("GET")
-// 	// router.HandleFunc("/getPassenger/{id}", getPassengerId).Methods("GET")
-// 	// router.HandleFunc("/createPassengers", createPassenger).Methods("POST")
-// 	// router.HandleFunc("/updatePassenger/{id}", updatePassenger).Methods("PUT")
-// 	// router.HandleFunc("/deletePassenger/{id}", deletePassenger).Methods("DELETE")
-
-// 	fmt.Printf("Starting server at port 8000\n")
-// 	if err := http.ListenAndServe(":8000", app); err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
+	fmt.Printf("Starting server at port 8000\n")
+	if err := app.Listen(":8000"); err != nil {
+		log.Fatal(err)
+	}
+}
 
 func main() {
 	database.InitMigration()
@@ -37,6 +33,6 @@ func main() {
 	if err := http.ListenAndServe(":8000", nil); err != nil {
 		log.Fatal(err)
 	}
-	//	initRouter()
+	initRouter()
 
 }
