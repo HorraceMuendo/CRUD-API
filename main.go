@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
 	database "planeTicketApi/database_config"
 	"planeTicketApi/handlers"
 
@@ -21,18 +20,18 @@ func initRouter() {
 	app.Delete("/deletePassengers/:id", handlers.DeletePassenger)
 
 	fmt.Printf("Starting server at port 8000\n")
-	if err := app.Listen(":8000"); err != nil {
-		log.Fatal(err)
-	}
+
+	log.Fatal(app.Server().ListenAndServe(":8000"))
 }
 
 func main() {
 	database.InitMigration()
 
-	fmt.Printf("Starting server at port 8000\n")
-	if err := http.ListenAndServe(":8000", nil); err != nil {
-		log.Fatal(err)
-	}
+	// fmt.Printf("Starting server at port 8000\n")
+	// if err := http.ListenAndServe(":8000", nil); err != nil {
+	// 	log.Fatal(err)
+	// }
 	initRouter()
+	//log.Fatal(app.Listen(":3000"))
 
 }
