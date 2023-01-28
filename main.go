@@ -3,30 +3,35 @@ package main
 import (
 	"fmt"
 	"log"
-	"net/http"
+	database "planeTicketApi/database_config"
+	"planeTicketApi/handlers"
 
-	"github.com/gorilla/mux"
+	"github.com/gofiber/fiber/v2"
 	_ "github.com/lib/pq"
 )
 
 func initRouter() {
-	router := mux.NewRouter()
+	app := fiber.New(fiber.Config{AppName: "PlaneTicketApi v1.0.0"})
 
-	router.HandleFunc("/getPassengers", getPassengers).Methods("GET")
-	router.HandleFunc("/getPassenger/{id}", getPassengerId).Methods("GET")
-	router.HandleFunc("/createPassengers", createPassenger).Methods("POST")
-	router.HandleFunc("/updatePassenger/{id}", updatePassenger).Methods("PUT")
-	router.HandleFunc("/deletePassenger/{id}", deletePassenger).Methods("DELETE")
+	app.Get("/getPassengers", handlers.GetPassengers)
+	app.Get("/getPassengers/:id", handlers.GetPassengerById)
+	app.Post("/getPassengers", handlers.CreatePassenger)
+	app.Put("/updatePassengers/:id", handlers.UpdatePassenger)
+	app.Delete("/deletePassengers/:id", handlers.DeletePassenger)
 
 	fmt.Printf("Starting server at port 8000\n")
-	if err := http.ListenAndServe(":8000", router); err != nil {
-		log.Fatal(err)
-	}
+
+	log.Fatal(app.Server().ListenAndServe(":8000"))
 }
 
 func main() {
+	database.InitMigration()
 
-	initMigration()
+	// fmt.Printf("Starting server at port 8000\n")
+	// if err := http.ListenAndServe(":8000", nil); err != nil {
+	// 	log.Fatal(err)
+	// }
 	initRouter()
+	//log.Fatal(app.Listen(":3000"))
 
 }
